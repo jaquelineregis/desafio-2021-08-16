@@ -28,6 +28,7 @@ class Jogador:
         self.personalidade = personalidade
 
     def comprar(self, numero_propriedade, valor_compra, valor_aluguel):
+        self.checar_se_pode_continuar_jogando()
         if self.saldo < valor_compra:
             return False
         else:
@@ -59,10 +60,11 @@ class Jogador:
         else:
             pagamento = valor_aluguel
         proprietario.recebe_aluguel(pagamento)
-
         self.saldo -= valor_aluguel
-        if self.saldo < 0:
-            self.jogando = False
+        self.checar_se_pode_continuar_jogando()
+
+    def checar_se_pode_continuar_jogando(self):
+        self.jogando = self.saldo >= 0
 
     def add_posicao_atual(self, numero_de_casas):
         self.posicao_anterior = self.posicao_atual
@@ -219,7 +221,10 @@ def jogar():
             maior_turno = max([j.turno for j in [*jogadores, *perdedores]])
             resultados.update(
                 {
-                    "total_de_partidas_terminadas_em_time_out": resultados["total_de_partidas_terminadas_em_time_out"] + 1,
+                    "total_de_partidas_terminadas_em_time_out": resultados[
+                        "total_de_partidas_terminadas_em_time_out"
+                    ]
+                    + 1,
                     "media_de_turnos_por_partida": resultados[
                         "media_de_turnos_por_partida"
                     ]
@@ -228,9 +233,9 @@ def jogar():
             )
             resultados["total_de_vitorias_por_personalidade"].update(
                 {
-                    vencedor.personalidade: resultados["total_de_vitorias_por_personalidade"][
-                        vencedor.personalidade
-                    ]
+                    vencedor.personalidade: resultados[
+                        "total_de_vitorias_por_personalidade"
+                    ][vencedor.personalidade]
                     + 1
                 },
             )
